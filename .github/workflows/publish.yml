@@ -71,7 +71,10 @@ jobs:
           node-version: 18
           registry-url: https://registry.npmjs.org/
           cache: "yarn"
-      - run: yarn install
-      - run: npm publish
+      - name: Install Deps
+        run: yarn install
+      - name: Publish
+        run: npm publish
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
