@@ -20,10 +20,6 @@ jobs:
         run: yarn install
       - name: Build Source
         run: yarn build
-  publish:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
       - name: Push changes
         uses: EndBug/add-and-commit@v9
         with:
