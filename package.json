@@ -1,0 +1,27 @@
+{
+  "name": "slpl",
+  "version": "0.0.1",
+  "description": "A new coding language made on nodejs",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "node dev.js",
+    "build": "yarn tsc && yarn ncc build out/index.js -o bin/lib"
+  },
+  "keywords": [
+    "language"
+  ],
+  "author": "AHQ Softwares",
+  "license": "MIT",
+  "bin": {
+    "slpl": "bin/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.18",
+    "@vercel/ncc": "^0.34.0",
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "chalk": "3",
+    "fs-extra": "^10.1.0"
+  }
+}
