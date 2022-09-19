@@ -33,7 +33,7 @@ jobs:
     needs: [build]
     strategy:
       matrix:
-        runner: [windows-latest, mac-latest, linux-latest]
+        runner: [windows-latest, macos-latest, ubuntu-latest]
         node-version: [14.x, 16.x, 18.x]
         packager: ['npm', 'yarn']
 
