@@ -40,6 +40,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
 
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2.3.4
       - name: Setup Linter Node ${{ matrix.node-version }} with ${{ matrix.packager }}
         uses: actions/setup-node@v3
         with:
