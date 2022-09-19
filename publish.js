@@ -7,7 +7,7 @@ function publish(tag) {
          console.log(`Publishing @${chalk.green(tag ? tag : "latest")}`);
          exec(`npm publish${tag ? `--tag=${tag}` : ""}`, {env: process.env}, (err, stderr, out) => {
                   if (err) {
-                           throw new Error("Unable to run command!");
+                           throw new Error(String(err));
                   }
                   if (stderr) {
                            console.log(chalk.red(String(stderr)));
