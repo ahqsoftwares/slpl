@@ -31,9 +31,10 @@ jobs:
           message: "Push Packages"
   lint:
     strategy:
-      runner: [windows-latest, mac-latest, linux-latest]
-      node-version: [14.x, 16.x, 18.x]
-      packager: ['npm', 'yarn']
+      matrix:
+        runner: [windows-latest, mac-latest, linux-latest]
+        node-version: [14.x, 16.x, 18.x]
+        packager: ['npm', 'yarn']
 
     runs-on: ${{ matrix.runner }}
 
