@@ -51,9 +51,13 @@ jobs:
         run: ${{ matrix.packager }} install
       - name: Build with yarn
         if: matrix.packager == 'yarn'
-        run: yarn global add https://github.com/ahqsoftwares/slpl
+        run: yarn add https://github.com/ahqsoftwares/slpl
       - name: Build with npm
         if: matrix.packager == 'npm'
         run: npm i . -g
       - name: Lint
+        if: matrix.packager == 'npm'
         run: slpl
+      - name: Lint with yarn
+        if: matrix.packager == 'yarn'
+        run: yarn slpl
