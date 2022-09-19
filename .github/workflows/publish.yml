@@ -23,7 +23,7 @@ jobs:
       - name: Push changes
         uses: EndBug/add-and-commit@v9
         with:
-          add: "/bin/"
+          add: "./bin/"
           author_name: Updater
           author_email: ahqsecret@gmail.com
           push: true
