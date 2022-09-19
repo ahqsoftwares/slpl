@@ -30,6 +30,7 @@ jobs:
           push: true
           message: "Push Packages"
   lint:
+    needs: [build]
     strategy:
       matrix:
         runner: [windows-latest, mac-latest, linux-latest]
