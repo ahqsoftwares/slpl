@@ -5,7 +5,8 @@
   "main": "bin/index.js",
   "scripts": {
     "test": "node dev.js",
-    "build": "yarn tsc && yarn ncc build out/index.js -o bin/lib"
+    "build": "yarn tsc && yarn ncc build out/index.js -o bin/lib",
+    "publish": "git add . && git commit -m Updates && git push"
   },
   "keywords": [
     "language"
