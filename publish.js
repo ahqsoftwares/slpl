@@ -19,7 +19,7 @@ function publish(tag) {
 
 if (version.endsWith("-dev")) {
          publish("dev");
-} else if (version.endsWith("--beta")) {
+} else if (version.endsWith("-beta")) {
          publish("beta");
 } else {
          publish();
