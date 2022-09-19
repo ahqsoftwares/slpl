@@ -1,4 +1,4 @@
-name: "Lint and pubish"
+name: "Build outputs and lint"
 
 on: 
   push:
@@ -29,3 +29,27 @@ jobs:
           author_email: ahqsecret@gmail.com
           push: true
           message: "Push Packages"
+  lint:
+    strategy:
+      runner: [windows-latest, mac-latest, linux-latest]
+      node-version: [14.x, 16.x, 18.x]
+      packager: ['npm', 'yarn']
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: Setup Linter Node ${{ matrix.node-version }} with ${{ matrix.packager }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: ${{ matrix.packager }}
+      - name: Install
+        run: ${{ matrix.packager }} install
+      - name: Build with yarn
+        if: matrix.packager === 'yarn'
+        run: yarn global add https://github.com/ahqsoftwares/slpl
+      - name: Build with npm
+        if: matrix.packager === 'npm'
+        run: npm i . -g
+      - name: Lint
+        run: slpl
