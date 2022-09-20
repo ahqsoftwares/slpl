@@ -34,8 +34,8 @@ jobs:
     strategy:
       matrix:
         runner: [windows-latest, macos-latest, ubuntu-latest]
-        node-version: [14.x, 16.x, 18.x]
-        packager: ['npm', 'yarn']
+        node-version: [16.x, 18.x]
+        packager: ['npm', 'yarn', 'pnpm']
 
     runs-on: ${{ matrix.runner }}
 
@@ -52,15 +52,18 @@ jobs:
       - name: Build with yarn
         if: matrix.packager == 'yarn'
         run: yarn add https://github.com/ahqsoftwares/slpl
+      - name: Build with pnpm
+        if: matrix.packager == 'pnpm'
+        run: pnpm add https://github.com/ahqsoftwares/slpl -g
       - name: Build with npm
         if: matrix.packager == 'npm'
         run: npm i . -g
       - name: Lint
         if: matrix.packager == 'npm'
         run: slpl
-      - name: Lint with yarn
-        if: matrix.packager == 'yarn'
-        run: yarn slpl
+      - name: Lint with yarn or pnpm
+        if: matrix.packager != 'npm'
+        run: ${{ matrix.packager }} slpl
   publish-npm:
     needs: [build, lint]
     runs-on: ubuntu-latest
