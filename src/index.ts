@@ -9,6 +9,7 @@ const compiler = require("./app/compiler");
                            require("./modules/checks")(process.cwd())
                            break;
                   case "run":
+                           require("./modules/checks")(process.cwd(), true)
                            break;
                   default:
                            require("./app/help")()

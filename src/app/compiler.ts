@@ -1,4 +1,5 @@
-const compile = require("./methods/compile");
+const compile = require("./compiler/compile");
+const compileFn = require("./function/compile");
 const path = require("path");
 let error: Function = (msg: String) => {
 
@@ -32,8 +33,8 @@ module.exports = class SlPl {
           * Compiles a function to plain javascript
           * @param {string} fn code for function
           */
-          compileFn(fn: string) {
-
+         compileFn(fn: string) {
+                  return compileFn(fn, error);
          }
 
          /**

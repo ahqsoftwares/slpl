@@ -25,5 +25,8 @@
   "dependencies": {
     "chalk": "3",
     "fs-extra": "^10.1.0"
+  },
+  "engines": {
+    "node": ">=16.x"
   }
 }

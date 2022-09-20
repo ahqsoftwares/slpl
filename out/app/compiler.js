@@ -1,5 +1,6 @@
 "use strict";
-const compile = require("./methods/compile");
+const compile = require("./compiler/compile");
+const compileFn = require("./function/compile");
 const path = require("path");
 let error = (msg) => {
 };
@@ -29,6 +30,7 @@ module.exports = class SlPl {
      * @param {string} fn code for function
      */
     compileFn(fn) {
+        return compileFn(fn, error);
     }
     /**
      * Compiles package.slpl to package.json

@@ -1,16 +1,16 @@
 "use strict";
-module.exports = function checkFiles(dir) {
+module.exports = function checkFiles(dir, run) {
     const chalk = require("chalk");
     const path = require("path");
-    const { readFileSync, statSync, readdirSync, mkdirSync, writeFile, writeFileSync } = require("fs");
+    const { readFileSync, statSync, readdirSync, mkdirSync, writeFile, rmdirSync, emptyDirSync, copySync } = require("fs-extra");
     function getFiles(dirPath, arrayOfFiles) {
         let files = readdirSync(dirPath);
         arrayOfFiles = arrayOfFiles || [];
         for (const file of files) {
-            if (statSync(dirPath + "/" + file).isDirectory()) {
+            if (statSync(dirPath + "/" + file).isDirectory() && file !== "out") {
                 arrayOfFiles = getFiles(dirPath + "/" + file, arrayOfFiles);
             }
-            else {
+            else if (file !== "out") {
                 arrayOfFiles.push(path.join(dirPath, "/", file));
             }
         }
@@ -29,6 +29,9 @@ module.exports = function checkFiles(dir) {
         mkdirSync(path.join(dir, "/", "out", "/"));
     }
     catch (e) {
+        emptyDirSync(path.join(dir, "/", "out", "/"));
+        rmdirSync(path.join(dir, "/", "out", "/"));
+        mkdirSync(path.join(dir, "/", "out", "/"));
     }
     const slplCompiler = new (require("../app/compiler"))(path.join(dir, "/", "out", "/"), (error) => {
         console.log(chalk `{red ${error}}`);
@@ -45,19 +48,26 @@ module.exports = function checkFiles(dir) {
     }
     for (const path of paths) {
         let data = String(readFileSync(path));
+        console.log(chalk.yellow(`\n\nCompiling ${path.replace((require("path")).join(dir, "/"), "")}`));
         if (path.endsWith("index.spli")) {
             const compiled = slplCompiler.compileIndex(data);
             writeFile((require("path")).join(dir, "/", "out", "/", "index.js"), compiled, () => {
             });
         }
         else if (path.endsWith(".splf")) {
-            slplCompiler.compileFn(data);
+            const compiled = slplCompiler.compileFn(data);
+            const file = getFileNames([path], (require("path")).join(dir, "/"))[0];
+            let formats = file.split(".");
+            formats.splice(formats.length - 1, 1);
+            writeFile((require("path")).join(dir, "/", "out", "/", `${formats.join(".")}.js`), compiled, () => {
+            });
         }
         else if (path.endsWith(".slpl")) {
             slplCompiler.compilePackage(data);
         }
         else {
-            slplCompiler.addAssets(path);
+            copySync(path, (require("path")).join(dir, "/", "out", "/", path.replace((require("path")).join(dir, "/"), "")));
         }
+        console.log(chalk.green(`Compiled ${path.replace((require("path")).join(dir, "/"), "")}`));
     }
 };

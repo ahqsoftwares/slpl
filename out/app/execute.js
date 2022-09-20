@@ -1,8 +1,7 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const child_process_1 = require("child_process");
+const { spawn } = require("child_process");
 module.exports = function Executer(path) {
-    const app = (0, child_process_1.spawn)("node", [path]);
+    const app = spawn("node", [path]);
     app.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
     });
