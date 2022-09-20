@@ -1,6 +1,6 @@
 {
   "name": "slpl",
-  "version": "0.0.3-dev",
+  "version": "0.1.0-dev",
   "description": "A new coding language made on nodejs",
   "main": "bin/index.js",
   "type": "commonjs",
