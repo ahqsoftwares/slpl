@@ -1960,41 +1960,92 @@ module.exports = {
 
 /***/ }),
 
-/***/ 174:
+/***/ 147:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs");
+
+/***/ }),
+
+/***/ 37:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("os");
+
+/***/ }),
+
+/***/ 17:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("path");
+
+/***/ }),
+
+/***/ 224:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("tty");
+
+/***/ }),
+
+/***/ 220:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
-const compile = __nccwpck_require__(120);
+const compile = __nccwpck_require__(286);
+const path = __nccwpck_require__(17);
 let error = (msg) => {
 };
 /**
  * The Simple Level Programming Language Code Structurer
  */
-class SlPl {
+module.exports = class SlPl {
     /**
      * Creates the structurer
      * @param {string} main
      * @param {object} functions
      * @param {Function} callback
      */
-    constructor(main, functions, callback) {
+    constructor(out, callback) {
         error = callback;
-        this.mainCode = main;
-        this.sub = functions;
+        this.out = out;
     }
     /**
      * Compiles code to javascript
+     * @param {string} data code for the main file
      */
-    compile() {
+    compileIndex(data) {
+        return compile(data, error);
     }
-}
-module.exports = SlPl;
+    /**
+     * Compiles a function to plain javascript
+     * @param {string} fn code for function
+     */
+    compileFn(fn) {
+    }
+    /**
+     * Compiles package.slpl to package.json
+     * @param {string} packageFile packge.slpl code
+     */
+    compilePackage(packageFile) {
+    }
+    /**
+     * Add an asset to the out dir
+     * @param path
+     */
+    addAssets(path) {
+    }
+};
 
 
 /***/ }),
 
-/***/ 874:
+/***/ 890:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -2016,65 +2067,157 @@ Following are the Simple Programming Language commands:
 
 /***/ }),
 
-/***/ 120:
-/***/ ((module) => {
+/***/ 286:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
 
-let jsCode = (/* unused pure expression or super */ null && ([]));
 /**
  * Compiles the code to javascript
  * @param {string} code
  * @param {Function} error
  */
 function Compile(code, error) {
+    const types = __nccwpck_require__(482);
+    let jsCode = "";
     const lines = code.split("\n");
     for (const fragment of lines) {
         const commands = fragment.split(" ");
-        console.log(commands);
+        let codeFrag = "";
+        switch (commands[0]) {
+            case "LOAD":
+                const moduler = commands[1].split(";")[0];
+                codeFrag += `const ${moduler} = require("./${moduler}.js");\n`;
+                break;
+            case "$$":
+                const [$$, name, equals, type, ...others] = commands;
+                let data;
+                if (!types[type]) {
+                    error(`Illegal Type: ${type}\nAvailable: ${Object.keys(types).join(",")}`);
+                }
+                if (type === "STRING" || type === "JSON") {
+                    let raw = [];
+                    for (const key of others) {
+                        /*if (key.endsWith(";\r")) {
+                                 let parts = key.split(";");
+                                 parts.splice(parts.length - 1, 1);
+                                 raw.push(parts.join(";"));
+                        } else {*/
+                        raw.push(key.replaceAll("\r", ""));
+                        /*}*/
+                    }
+                    data = raw.join(" ");
+                }
+                else {
+                    data = others[0].split(";")[0];
+                }
+                const result = eval(types[type].replaceAll("{data}", data));
+                codeFrag = `const ${name} = ${JSON.stringify(result)};\n`;
+                break;
+            case "$":
+                break;
+            case "":
+                break;
+            default:
+                error(`Illegal operator: ${commands[0]}`);
+                throw new Error("Illegal Operator");
+        }
+        jsCode += codeFrag;
     }
+    return jsCode;
 }
 module.exports = Compile;
 
 
 /***/ }),
 
-/***/ 148:
-/***/ (function(__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) {
+/***/ 482:
+/***/ ((module) => {
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+module.exports = {
+    "BOOLEAN": "\"{data}\" === \"true\"",
+    "NUMBER": "Number(\"{data}\")",
+    "STRING": "String(\"{data}\")",
+    "JSON": "JSON.parse(`{data}`)"
 };
-process.argv.splice(0, 2);
-const args = __nccwpck_require__(476)(process.argv);
-const chalk = __nccwpck_require__(818);
-const compiler = __nccwpck_require__(174);
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(args);
-    const slpl = new compiler();
-    switch (args["_bin"][0]) {
-        case "compile":
-            break;
-        case "run":
-            break;
-        default:
-            __nccwpck_require__(874)();
-            break;
-    }
-}))();
 
 
 /***/ }),
 
-/***/ 476:
+/***/ 801:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+module.exports = function checkFiles(dir) {
+    const chalk = __nccwpck_require__(818);
+    const path = __nccwpck_require__(17);
+    const { readFileSync, statSync, readdirSync, mkdirSync, writeFile, writeFileSync } = __nccwpck_require__(147);
+    function getFiles(dirPath, arrayOfFiles) {
+        let files = readdirSync(dirPath);
+        arrayOfFiles = arrayOfFiles || [];
+        for (const file of files) {
+            if (statSync(dirPath + "/" + file).isDirectory()) {
+                arrayOfFiles = getFiles(dirPath + "/" + file, arrayOfFiles);
+            }
+            else {
+                arrayOfFiles.push(path.join(dirPath, "/", file));
+            }
+        }
+        return arrayOfFiles;
+    }
+    function getFileNames(locations, dir) {
+        let files = [];
+        for (const file of locations) {
+            files.push(file.replace(dir, ""));
+        }
+        return files;
+    }
+    const paths = getFiles(dir);
+    const files = getFileNames(paths, path.join(dir, "/"));
+    try {
+        mkdirSync(path.join(dir, "/", "out", "/"));
+    }
+    catch (e) {
+    }
+    const slplCompiler = new (__nccwpck_require__(220))(path.join(dir, "/", "out", "/"), (error) => {
+        console.log(chalk `{red ${error}}`);
+        return;
+    });
+    if (files.some((name) => name === "package.slpl")) {
+        console.log(chalk `{green Found package.slpl}\n{yellow Will compile package data}`);
+    }
+    if (files.some((name) => name.endsWith(".splf"))) {
+        console.log(chalk `{green Found Functions}\n{yellow Will compile functions}`);
+    }
+    if (!files.some((name) => name === "index.spli")) {
+        return console.log(chalk `{red Could not find {yellow index.spli}}`);
+    }
+    for (const path of paths) {
+        let data = String(readFileSync(path));
+        if (path.endsWith("index.spli")) {
+            const compiled = slplCompiler.compileIndex(data);
+            writeFile((__nccwpck_require__(17).join)(dir, "/", "out", "/", "index.js"), compiled, () => {
+            });
+        }
+        else if (path.endsWith(".splf")) {
+            slplCompiler.compileFn(data);
+        }
+        else if (path.endsWith(".slpl")) {
+            slplCompiler.compilePackage(data);
+        }
+        else {
+            slplCompiler.addAssets(path);
+        }
+    }
+};
+
+
+/***/ }),
+
+/***/ 708:
 /***/ ((module) => {
 
 "use strict";
@@ -2104,22 +2247,6 @@ module.exports = function Parse(args) {
 };
 
 
-/***/ }),
-
-/***/ 37:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("os");
-
-/***/ }),
-
-/***/ 224:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("tty");
-
 /***/ })
 
 /******/ 	});
@@ -2144,7 +2271,7 @@ module.exports = require("tty");
 /******/ 		// Execute the module function
 /******/ 		var threw = true;
 /******/ 		try {
-/******/ 			__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nccwpck_require__);
+/******/ 			__webpack_modules__[moduleId](module, module.exports, __nccwpck_require__);
 /******/ 			threw = false;
 /******/ 		} finally {
 /******/ 			if(threw) delete __webpack_module_cache__[moduleId];
@@ -2172,12 +2299,30 @@ module.exports = require("tty");
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(148);
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+
+process.argv.splice(0, 2);
+const args = __nccwpck_require__(708)(process.argv);
+const chalk = __nccwpck_require__(818);
+const compiler = __nccwpck_require__(220);
+(async () => {
+    switch (args["_bin"][0]) {
+        case "compile":
+            __nccwpck_require__(801)(process.cwd());
+            break;
+        case "run":
+            break;
+        default:
+            __nccwpck_require__(890)();
+            break;
+    }
+})();
+
+})();
+
+module.exports = __webpack_exports__;
 /******/ })()
 ;

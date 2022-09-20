@@ -1,4 +1,5 @@
 const compile = require("./methods/compile");
+const path = require("path");
 let error: Function = (msg: String) => {
 
 };
@@ -6,27 +7,48 @@ let error: Function = (msg: String) => {
 /**
  * The Simple Level Programming Language Code Structurer
  */
-class SlPl {
-         mainCode: string;
-         sub: object;
+module.exports = class SlPl {
+         out: string;
          /**
           * Creates the structurer
           * @param {string} main
           * @param {object} functions
           * @param {Function} callback 
           */
-         constructor(main: string, functions: object, callback: Function) {
+         constructor(out: string, callback: Function) {
                   error = callback;
-                  this.mainCode = main;
-                  this.sub = functions;
+                  this.out = out;
          }
 
          /**
           * Compiles code to javascript
+          * @param {string} data code for the main file
           */
-         compile() {
+         compileIndex(data: string) {
+                  return compile(data, error);
+         }
+
+         /**
+          * Compiles a function to plain javascript
+          * @param {string} fn code for function
+          */
+          compileFn(fn: string) {
+
+         }
+
+         /**
+          * Compiles package.slpl to package.json
+          * @param {string} packageFile packge.slpl code
+          */
+         compilePackage(packageFile: string) {
+
+         }
+
+         /**
+          * Add an asset to the out dir
+          * @param path 
+          */
+         addAssets(path: string) {
 
          }
 }
-
-module.exports = SlPl;

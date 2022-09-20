@@ -4,11 +4,9 @@ const chalk = require("chalk");
 const compiler = require("./app/compiler");
 
 (async() => {
-         console.log(args);
-         const slpl = new compiler();
-
          switch (args["_bin"][0]) {
                   case "compile":
+                           require("./modules/checks")(process.cwd())
                            break;
                   case "run":
                            break;

@@ -1,8 +1,9 @@
 {
   "name": "slpl",
-  "version": "0.0.2-dev",
+  "version": "0.0.3-dev",
   "description": "A new coding language made on nodejs",
   "main": "bin/index.js",
+  "type": "commonjs",
   "scripts": {
     "test": "node dev.js",
     "build": "yarn tsc && yarn ncc build out/index.js -o bin/lib",
